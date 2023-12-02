@@ -67,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setAvatar(registerDto.getAvatar());
         userEntity.setPhoneNumber(registerDto.getPhoneNumber());
         userEntity.setGender(registerDto.isGender());
+        userEntity.setDob(registerDto.getDob());
         userEntity.setStatus(false);
 
         Role roles = roleRepository.findByName(registerDto.getRole().getName()).get();

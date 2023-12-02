@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,5 +23,6 @@ public class RegisterDto {
     private String avatar;
     private String address;
     private boolean gender;
+    private Date dob;
     private Role role;
 }

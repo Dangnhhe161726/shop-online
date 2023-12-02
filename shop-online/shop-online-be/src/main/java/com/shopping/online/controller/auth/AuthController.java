@@ -1,6 +1,5 @@
 package com.shopping.online.controller.auth;
 
-import com.shopping.online.dto.AuthResponseDto;
 import com.shopping.online.dto.HttpResponse;
 import com.shopping.online.dto.LoginDto;
 import com.shopping.online.dto.RegisterDto;
