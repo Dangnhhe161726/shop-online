@@ -1,15 +1,17 @@
 package com.shopping.online.service.impl;
 
 
-import com.shopping.online.dto.AuthResponseDto;
 import com.shopping.online.dto.LoginDto;
 import com.shopping.online.dto.RegisterDto;
+import com.shopping.online.model.Confirmation;
 import com.shopping.online.model.Role;
 import com.shopping.online.model.UserEntity;
-import com.shopping.online.repository.RoleRespository;
-import com.shopping.online.repository.UserRespository;
+import com.shopping.online.repository.ConfirmationRepository;
+import com.shopping.online.repository.RoleRepository;
+import com.shopping.online.repository.UserRepository;
 import com.shopping.online.sercurity.jwt.JwtGenerator;
 import com.shopping.online.service.AuthService;
+import com.shopping.online.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,32 +27,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
-    private final UserRespository userRespository;
-    private final RoleRespository roleRespository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtGenerator jwtGenerator;
+    private final ConfirmationRepository confirmationRepository;
+    private final EmailService emailService;
 
     @Override
-    public AuthResponseDto login(LoginDto loginDto) {
+    public String login(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(),
                         loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        var user = userRespository.findByEmail(loginDto.getEmail())
+        var user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow();
+
+        if (!user.isStatus()) {
+            return null;
+        }
+
         var token = jwtGenerator.generateToken(user.getEmail());
 
-        return AuthResponseDto
-                .builder()
-                .accessToken(token)
-                .build();
+        return token;
     }
 
     @Override
-    public AuthResponseDto register(RegisterDto registerDto) {
-        Optional<UserEntity> userResponse = userRespository.findByEmail(registerDto.getEmail());
-        if (userResponse.isPresent()) {
-            return null;
+    public UserEntity register(RegisterDto registerDto) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new RuntimeException("Email already exists");
         }
 
         UserEntity userEntity = new UserEntity();
@@ -62,17 +67,30 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setAvatar(registerDto.getAvatar());
         userEntity.setPhoneNumber(registerDto.getPhoneNumber());
         userEntity.setGender(registerDto.isGender());
-        userEntity.setStatus(true);
+        userEntity.setStatus(false);
 
-        Role roles = roleRespository.findByName(registerDto.getRole().getName()).get();
-
+        Role roles = roleRepository.findByName(registerDto.getRole().getName()).get();
         userEntity.setRoles(Collections.singletonList(roles));
-        userRespository.save(userEntity);
-        var token = jwtGenerator.generateToken(userEntity.getEmail());
+        userRepository.save(userEntity);
 
-        return AuthResponseDto
-                .builder()
-                .accessToken(token)
-                .build();
+        var token = jwtGenerator.generateToken(userEntity.getEmail());
+        Confirmation confirmation = new Confirmation(userEntity, token);
+        confirmationRepository.save(confirmation);
+        //Send email with token
+        emailService.sendHtmlEmailWithEmbeddedFiles(userEntity.getFirstName() + userEntity.getLastName(),
+                userEntity.getEmail(), token);
+        return userEntity;
+    }
+
+    @Override
+    public Boolean verifyToken(String token) {
+        Confirmation confirmation = confirmationRepository.findByToken(token);
+        Optional<UserEntity> userEntity = userRepository.findByEmail(confirmation.getUserEntity().getEmail());
+        if (!userEntity.isPresent()) {
+            throw new RuntimeException("Email verify not exist");
+        }
+        userEntity.get().setStatus(true);
+        confirmationRepository.delete(confirmation);
+        return Boolean.TRUE;
     }
 }

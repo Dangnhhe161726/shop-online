@@ -4,9 +4,11 @@ package com.shopping.online.service;
 import com.shopping.online.dto.AuthResponseDto;
 import com.shopping.online.dto.LoginDto;
 import com.shopping.online.dto.RegisterDto;
+import com.shopping.online.model.UserEntity;
 
 public interface AuthService {
 
-    AuthResponseDto login (LoginDto loginDto);
-    AuthResponseDto register(RegisterDto registerDto);
+    String login (LoginDto loginDto);
+    UserEntity register(RegisterDto registerDto);
+    Boolean verifyToken(String token);
 }

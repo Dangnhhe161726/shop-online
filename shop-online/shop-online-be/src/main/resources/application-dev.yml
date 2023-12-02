@@ -1,0 +1,17 @@
+#Database
+MYSQL_HOST: mysql
+MYSQL_PORT: 3306
+MYSQL_DB: shop_online
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: 1234
+
+#Server
+SERVER_PORT: 8080
+ACTIVE_PROFILE: dev
+
+#Email Config
+EMAIL_HOST: smtp.gmail.com
+EMAIL_PORT: 587
+EMAIL_ID: nuyenhongdang@gmail.com
+EMAIL_PASSWORD: yxod oewc uvff lxsh
+VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}

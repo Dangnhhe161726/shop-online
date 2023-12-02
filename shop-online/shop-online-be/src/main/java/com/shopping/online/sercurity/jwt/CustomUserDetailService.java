@@ -3,7 +3,7 @@ package com.shopping.online.sercurity.jwt;
 
 import com.shopping.online.model.Role;
 import com.shopping.online.model.UserEntity;
-import com.shopping.online.repository.UserRespository;
+import com.shopping.online.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
-    private final UserRespository userRespository;
+    private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRespository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+        UserEntity userEntity = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
         return new User(userEntity.getEmail(), userEntity.getPassword(), mapRoles(userEntity.getRoles()));
     }
 

@@ -3,6 +3,7 @@ package com.shopping.online.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,10 @@ public class UserEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "date_of_brith")
+    @Temporal(TemporalType.DATE)
+    private Date dob;
+
     private String password;
     private String avatar;
     private String address;
@@ -41,5 +46,11 @@ public class UserEntity {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userEntity")
+    private List<Contact> contacts;
+
+    @OneToMany(mappedBy = "userEntity")
+    private List<Cart> carts;
 
 }
