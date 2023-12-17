@@ -47,10 +47,5 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userEntity")
-    private List<Contact> contacts;
-
-    @OneToMany(mappedBy = "userEntity")
-    private List<Cart> carts;
 
 }
