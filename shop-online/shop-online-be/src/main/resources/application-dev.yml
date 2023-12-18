@@ -13,5 +13,5 @@ ACTIVE_PROFILE: dev
 EMAIL_HOST: smtp.gmail.com
 EMAIL_PORT: 587
 EMAIL_ID: nuyenhongdang@gmail.com
-EMAIL_PASSWORD: yxod oewc uvff lxsh
+EMAIL_PASSWORD: nehh amxp wtjp hles
 VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}
