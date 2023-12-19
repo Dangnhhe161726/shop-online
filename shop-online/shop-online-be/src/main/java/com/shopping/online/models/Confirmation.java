@@ -10,13 +10,14 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "confirmation")
+@Table(name = "confirmations")
 
 public class Confirmation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(nullable = false)
     private String token;
 
     @Temporal(TemporalType.TIMESTAMP)
