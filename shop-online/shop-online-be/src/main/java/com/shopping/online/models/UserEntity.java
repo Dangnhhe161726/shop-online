@@ -42,9 +42,14 @@ public class UserEntity {
     private boolean gender;
     private boolean status;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<Product> products;
 }

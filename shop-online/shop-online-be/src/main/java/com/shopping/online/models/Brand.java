@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
 @Builder
-@Table(name = "categories")
-public class Category {
+@Table(name = "brands")
+@NoArgsConstructor
+@AllArgsConstructor
+public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -22,7 +22,7 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "category",
+    @OneToMany(mappedBy = "brand",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<Product> products;

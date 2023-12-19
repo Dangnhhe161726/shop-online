@@ -6,24 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "categories")
-public class Category {
+@Table(name = "colors")
+public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String name;
-
-    @OneToMany(mappedBy = "category",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private List<Product> products;
 }
