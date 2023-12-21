@@ -20,32 +20,15 @@ public class BrandController {
 
     @GetMapping("")
     public ResponseEntity<HttpResponse> getAllBrand(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(LocalDateTime.now().toString())
                         .message("get all brand")
-                        .data(Map.of("page", page, "limit", limit))
                         .build()
         );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<HttpResponse> getBrandById(
-            @PathVariable Long id,
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .message("get brand by id")
-                        .data(Map.of("id", id, "page", page, "limit", limit))
-                        .build()
-        );
-    }
 
     @PostMapping("")
     public ResponseEntity<HttpResponse> insertBrand(
@@ -73,7 +56,7 @@ public class BrandController {
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpResponse> updateBrand(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody BrandDTO brandDTO,
             BindingResult result
     ) {
@@ -98,7 +81,7 @@ public class BrandController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpResponse> deleteBrand(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()

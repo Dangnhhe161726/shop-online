@@ -69,4 +69,9 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "size_id", referencedColumnName = "id"))
     private List<SizeEntity> sizeEnties = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<ProductImage> productImages;
 }

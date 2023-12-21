@@ -20,39 +20,22 @@ public class CategoryController {
 
     @GetMapping("")
     public ResponseEntity<HttpResponse> getAllCategory(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(LocalDateTime.now().toString())
                         .message("get all category")
-                        .data(Map.of("page", page, "limit", limit))
                         .build()
         );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<HttpResponse> getCategoryById(
-            @PathVariable Long id,
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .message("get Category by id")
-                        .data(Map.of("id", id, "page", page, "limit", limit))
-                        .build()
-        );
-    }
 
     @PostMapping("")
     public ResponseEntity<HttpResponse> insertCategory(
             @Valid @RequestBody CategoryDTO categoryDTO,
             BindingResult result
     ) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(LocalDateTime.now().toString())
@@ -62,21 +45,21 @@ public class CategoryController {
             );
         }
         return ResponseEntity.ok().body(
-            HttpResponse.builder()
-                    .timeStamp(LocalDateTime.now().toString())
-                    .data(Map.of("newCategory", categoryDTO))
-                    .message("insert category success")
-                    .build()
+                HttpResponse.builder()
+                        .timeStamp(LocalDateTime.now().toString())
+                        .data(Map.of("newCategory", categoryDTO))
+                        .message("insert category success")
+                        .build()
         );
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpResponse> updateCategory(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @Valid @RequestBody CategoryDTO categoryDTO,
             BindingResult result
-    ){
-        if(result.hasErrors()){
+    ) {
+        if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(LocalDateTime.now().toString())
@@ -96,14 +79,14 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpResponse> deleteCategory(
-            @PathVariable Long id
-    ){
+            @PathVariable("id") Long id
+    ) {
         return ResponseEntity.ok().body(
-            HttpResponse.builder()
-                    .timeStamp(LocalDateTime.now().toString())
-                    .data(Map.of("id", id))
-                    .message("delete category by id success")
-                    .build()
+                HttpResponse.builder()
+                        .timeStamp(LocalDateTime.now().toString())
+                        .data(Map.of("id", id))
+                        .message("delete category by id success")
+                        .build()
         );
     }
 

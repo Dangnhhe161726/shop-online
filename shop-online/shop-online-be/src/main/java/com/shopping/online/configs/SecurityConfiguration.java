@@ -34,7 +34,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**",
                                 "/api/v1/categories/**",
-                                "/api/v1/brands/**"
+                                "/api/v1/brands/**",
+                                "/api/v1/products/**",
+                                "/api/v1/sizes/**",
+                                "/api/v1/colors/**"
                         ).permitAll()
                         .requestMatchers("/api/v1/sale/**").hasAnyAuthority("SALE")
                         .requestMatchers("/api/v1/customer/**").hasAnyAuthority("CUSTOMER")

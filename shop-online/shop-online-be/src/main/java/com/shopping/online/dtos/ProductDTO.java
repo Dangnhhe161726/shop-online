@@ -25,7 +25,7 @@ public class ProductDTO {
     private String name;
 
     @Min(value = 0, message = "Price must be greater than or equal to 0")
-    private Float size;
+    private Float price;
 
     @JsonProperty("short_description")
     private String shortDescription;
@@ -50,6 +50,7 @@ public class ProductDTO {
     @JsonProperty("sizes")
     private List<SizeEntity> sizeEntities;
 
+    @JsonProperty("colors")
     private List<Color> colors;
 
 }
