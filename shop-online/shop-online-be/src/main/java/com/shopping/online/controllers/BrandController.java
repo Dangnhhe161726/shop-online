@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/brands")
+@RequestMapping("${api.prefix}/brands")
 @RequiredArgsConstructor
 public class BrandController {
 

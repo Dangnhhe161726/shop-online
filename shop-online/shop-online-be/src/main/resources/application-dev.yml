@@ -15,3 +15,6 @@ EMAIL_PORT: 587
 EMAIL_ID: nuyenhongdang@gmail.com
 EMAIL_PASSWORD: nehh amxp wtjp hles
 VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}
+
+#Version Api
+VERSION_API: v1

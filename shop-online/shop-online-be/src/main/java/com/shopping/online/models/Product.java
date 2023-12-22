@@ -74,4 +74,9 @@ public class Product {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<ProductImage> productImages;
+
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
 }

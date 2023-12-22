@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDto {
+public class RegisterDTO {
     @JsonProperty("first_name")
     @NotBlank(message = "First name is not blank")
     private String firstName;
@@ -35,8 +35,11 @@ public class RegisterDto {
     @Pattern(regexp = "[0-9]{10}", message = "Phone number it not valid")
     private String phoneNumber;
 
-    @NotBlank(message = "Password is not blank")
+    @NotBlank(message = "New password is not blank")
     private String password;
+
+    @NotBlank(message = "Repassword is not blank")
+    private String repassword;
 
     private String avatar;
 

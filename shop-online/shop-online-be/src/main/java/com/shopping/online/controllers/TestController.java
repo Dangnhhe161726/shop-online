@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${api.prefix}")
 public class TestController {
 
-    @GetMapping("/customer/")
+    @GetMapping("/customers/")
     public String testRoleCustomer(){
         return "hello Customer";
     }
 
-    @GetMapping("/sale/")
+    @GetMapping("/sales/")
     public String testRoleSale(){
         return "hello Sale";
     }

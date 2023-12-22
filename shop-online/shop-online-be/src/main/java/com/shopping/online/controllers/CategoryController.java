@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/categories")
+@RequestMapping("${api.prefix}/categories")
 public class CategoryController {
 
     @GetMapping("")

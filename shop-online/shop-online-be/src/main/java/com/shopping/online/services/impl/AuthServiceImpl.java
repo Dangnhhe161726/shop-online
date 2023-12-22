@@ -1,8 +1,8 @@
 package com.shopping.online.services.impl;
 
 
-import com.shopping.online.dtos.LoginDto;
-import com.shopping.online.dtos.RegisterDto;
+import com.shopping.online.dtos.LoginDTO;
+import com.shopping.online.dtos.RegisterDTO;
 import com.shopping.online.models.Confirmation;
 import com.shopping.online.models.Role;
 import com.shopping.online.models.UserEntity;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -36,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailService emailService;
 
     @Override
-    public String login(LoginDto loginDto) {
+    public String login(LoginDTO loginDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(),
                         loginDto.getPassword()));
@@ -54,9 +55,19 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserEntity register(RegisterDto registerDto) {
+    public UserEntity register(RegisterDTO registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new RuntimeException("Email already exists");
+        }
+
+        List<Role> roles = new ArrayList<>();
+        Role checkRole = null;
+        for (Role role: registerDto.getRoles()) {
+            checkRole = roleRepository.findByName(role.getName()).get();
+            if(checkRole == null){
+                throw new NoSuchElementException("Not find this role");
+            }
+            roles.add(checkRole);
         }
 
         UserEntity userEntity = new UserEntity();
@@ -70,12 +81,6 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setGender(registerDto.isGender());
         userEntity.setDob(registerDto.getDob());
         userEntity.setStatus(false);
-
-        List<Role> roles = new ArrayList<>();
-        for (Role role: registerDto.getRoles()) {
-            roles.add(roleRepository.findByName(role.getName()).get());
-        }
-
         userEntity.setRoles(roles);
         userRepository.save(userEntity);
 

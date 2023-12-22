@@ -1,9 +1,10 @@
 package com.shopping.online.controllers.auth;
 
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.dtos.LoginDto;
-import com.shopping.online.dtos.RegisterDto;
+import com.shopping.online.dtos.LoginDTO;
+import com.shopping.online.dtos.RegisterDTO;
 import com.shopping.online.models.UserEntity;
+import com.shopping.online.responses.UserResponse;
 import com.shopping.online.services.AuthService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
@@ -11,24 +12,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("${api.prefix}/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<HttpResponse> login(
-            @Valid @RequestBody LoginDto loginDto,
+            @Valid @RequestBody LoginDTO loginDto,
             BindingResult result
     ) {
         if(result.hasErrors()){
@@ -55,7 +54,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpResponse> register(
-            @Valid @RequestBody RegisterDto registerDto,
+            @Valid @RequestBody RegisterDTO registerDto,
             BindingResult result
     ) {
         if(result.hasErrors()){
@@ -67,11 +66,22 @@ public class AuthController {
                             .build()
             );
         }
+
+        if(!registerDto.getPassword().equalsIgnoreCase(registerDto.getRepassword())){
+            return ResponseEntity.badRequest().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .message("New password not equal with repassword")
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build()
+            );
+        }
+
         UserEntity newUserEntity = authService.register(registerDto);
         return ResponseEntity.created(URI.create("")).body(
                 HttpResponse.builder()
                         .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("user", newUserEntity))
+                        .data(Map.of("user", UserResponse.formUser(newUserEntity)))
                         .message("User created")
                         .status(HttpStatus.CREATED)
                         .statusCode(HttpStatus.CREATED.value())

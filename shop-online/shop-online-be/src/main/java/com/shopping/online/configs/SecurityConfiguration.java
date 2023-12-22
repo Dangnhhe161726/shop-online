@@ -4,6 +4,7 @@ package com.shopping.online.configs;
 import com.shopping.online.sercurities.jwt.JwtAuthEntryPoint;
 import com.shopping.online.sercurities.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,21 +27,28 @@ public class SecurityConfiguration {
     private final JwtAuthEntryPoint authEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Value("${api.prefix}")
+    private String apiPrefix;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**",
-                                "/api/v1/categories/**",
-                                "/api/v1/brands/**",
-                                "/api/v1/products/**",
-                                "/api/v1/sizes/**",
-                                "/api/v1/colors/**"
+                        .requestMatchers(String.format("%s/auth/**", apiPrefix),
+                                String.format("%s/categories/**", apiPrefix),
+                                String.format("%s/brands/**", apiPrefix),
+                                String.format("%s/products/**", apiPrefix),
+                                String.format("%s/sizes/**", apiPrefix),
+                                String.format("%s/colors/**", apiPrefix)
                         ).permitAll()
-                        .requestMatchers("/api/v1/sale/**").hasAnyAuthority("SALE")
-                        .requestMatchers("/api/v1/customer/**").hasAnyAuthority("CUSTOMER")
+                        .requestMatchers(
+                                String.format("%s/sales/**", apiPrefix)
+                        ).hasAnyAuthority("SALE")
+                        .requestMatchers(
+                                String.format("%s/customers/**", apiPrefix)
+                        ).hasAnyAuthority("CUSTOMER")
                         .anyRequest()
                         .authenticated()
                 )
