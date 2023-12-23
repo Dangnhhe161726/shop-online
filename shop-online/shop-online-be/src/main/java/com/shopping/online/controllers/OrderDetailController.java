@@ -1,8 +1,9 @@
 package com.shopping.online.controllers;
 
-import com.shopping.online.dtos.CategoryDTO;
+import com.shopping.online.dtos.OrderDetailDTO;
 import com.shopping.online.responses.HttpResponse;
 import com.shopping.online.validations.ValidationDTO;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,26 +16,37 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
+@RequestMapping("${api.prefix}/order_details")
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/categories")
-public class CategoryController {
+public class OrderDetailController {
 
-    @GetMapping("")
-    public ResponseEntity<HttpResponse> getAllCategory(
+    @GetMapping("/{id}")
+    public ResponseEntity<HttpResponse> getOrderDetail(
+            @Valid @PathVariable("id") Long orderDetailId
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .message("get all category")
+                        .message("get order detail by id")
                         .build()
         );
     }
 
+    //Get list order detail of oder
+    @GetMapping("/order/{id}")
+    public ResponseEntity<HttpResponse> getOrderDetails(
+            @Valid @PathVariable("id") Long orderId
+    ) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .message("get list order detail of order by order id")
+                        .build()
+        );
+    }
 
     @PostMapping("")
-    @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> insertCategory(
-            @Valid @RequestBody CategoryDTO categoryDTO,
+    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
+    public ResponseEntity<HttpResponse> createOrderDetail(
+            @Valid @RequestBody OrderDetailDTO orderDetailDTO,
             BindingResult result
     ) {
         try {
@@ -47,11 +59,11 @@ public class CategoryController {
                                 .build()
                 );
             }
+
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("newCategory", categoryDTO))
-                            .message("insert category success")
+                            .message("Create order detail success")
+                            .data(Map.of("new_order_detail", orderDetailDTO))
                             .build()
             );
         } catch (Exception e) {
@@ -65,12 +77,12 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> updateCategory(
-            @PathVariable("id") Long id,
-            @Valid @RequestBody CategoryDTO categoryDTO,
+    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
+    public ResponseEntity<HttpResponse> updateOrderDetail(
+            @Valid @PathVariable("id") Long orderDetailId,
+            @Valid @RequestBody OrderDetailDTO orderDetailDTO,
             BindingResult result
-    ) {
+    ){
         try {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(
@@ -81,11 +93,11 @@ public class CategoryController {
                                 .build()
                 );
             }
+
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("id", id, "updateCategory", categoryDTO))
-                            .message("update category success")
+                            .message("Update order detail success")
+                            .data(Map.of("update_order_detail", orderDetailDTO))
                             .build()
             );
         } catch (Exception e) {
@@ -99,17 +111,14 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> deleteCategory(
-            @PathVariable("id") Long id
-    ) {
+    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
+    public ResponseEntity<HttpResponse> deleteOrderDetail(
+            @Valid @PathVariable("id") Long orderDetailId
+    ){
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("id", id))
-                        .message("delete category by id success")
+                        .message("Delete order detail success")
                         .build()
         );
     }
-
 }

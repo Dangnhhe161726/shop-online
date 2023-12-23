@@ -23,6 +23,9 @@ public class OrderDetail {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(name = "total_money", nullable = false)
+    private Float totalMoney;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;

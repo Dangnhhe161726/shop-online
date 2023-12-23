@@ -50,6 +50,9 @@ public class Order {
     @Column(name = "shipping_date",nullable = false)
     private LocalDate shippingDate;
 
+    @Column(name = "shipping_address", nullable = false)
+    private String shippingAddress;
+
     @Column(name = "tracking_number", nullable = false)
     private String trackingNumber;
 

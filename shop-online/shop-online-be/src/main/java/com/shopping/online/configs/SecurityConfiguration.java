@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -36,19 +37,29 @@ public class SecurityConfiguration {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(String.format("%s/auth/**", apiPrefix),
-                                String.format("%s/categories/**", apiPrefix),
-                                String.format("%s/brands/**", apiPrefix),
-                                String.format("%s/products/**", apiPrefix),
-                                String.format("%s/sizes/**", apiPrefix),
-                                String.format("%s/colors/**", apiPrefix)
-                        ).permitAll()
                         .requestMatchers(
-                                String.format("%s/sales/**", apiPrefix)
-                        ).hasAnyAuthority("SALE")
-                        .requestMatchers(
-                                String.format("%s/customers/**", apiPrefix)
-                        ).hasAnyAuthority("CUSTOMER")
+                                String.format("%s/auth/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/categories/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/brands/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/products/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/sizes/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/colors/**", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/orders", apiPrefix)).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                String.format("%s/order_details", apiPrefix)).permitAll()
                         .anyRequest()
                         .authenticated()
                 )

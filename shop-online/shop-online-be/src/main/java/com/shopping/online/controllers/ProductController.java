@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,30 +54,41 @@ public class ProductController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('SALE')")
     public ResponseEntity<HttpResponse> insertProduct(
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ) {
-        if (result.hasErrors()) {
+        try {
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body(
+                        HttpResponse.builder()
+                                .timeStamp(LocalDateTime.now().toString())
+                                .message(ValidationDTO.getMessageError(result))
+                                .status(HttpStatus.BAD_REQUEST)
+                                .build()
+                );
+            }
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .data(Map.of("newProduct", productDTO))
+                            .message("insert product success")
+                            .build()
+            );
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(LocalDateTime.now().toString())
-                            .message(ValidationDTO.getMessageError(result))
-                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
                             .build()
             );
         }
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("newProduct", productDTO))
-                        .message("insert product success")
-                        .build()
-        );
     }
 
     @PostMapping(value = "/uploads/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('SALE')")
     public ResponseEntity<HttpResponse> uploadImages(
             @PathVariable("id") Long producId,
             @ModelAttribute("files") List<MultipartFile> files
@@ -137,30 +149,41 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SALE')")
     public ResponseEntity<HttpResponse> updateProduct(
             @PathVariable("id") Long id,
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ) {
-        if (result.hasErrors()) {
+        try{
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body(
+                        HttpResponse.builder()
+                                .timeStamp(LocalDateTime.now().toString())
+                                .message(ValidationDTO.getMessageError(result))
+                                .status(HttpStatus.BAD_REQUEST)
+                                .build()
+                );
+            }
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .data(Map.of("updateProduct", productDTO, "id", id))
+                            .message("update product success")
+                            .build()
+            );
+        }catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(LocalDateTime.now().toString())
-                            .message(ValidationDTO.getMessageError(result))
-                            .status(HttpStatus.BAD_REQUEST)
+                            .message(e.getMessage())
                             .build()
             );
         }
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("updateProduct", productDTO, "id", id))
-                        .message("update product success")
-                        .build()
-        );
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SALE')")
     public ResponseEntity<HttpResponse> deleteProduct(
             @PathVariable("id") Long id
     ) {
