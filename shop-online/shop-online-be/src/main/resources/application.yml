@@ -3,7 +3,7 @@ spring:
     active: ${ACTIVE_PROFILE:dev}
 
   datasource:
-    url: jdbc:${MYSQL_HOST}://localhost:${MYSQL_PORT}/${MYSQL_DB}
+    url: jdbc:${MYSQL_HOST}://localhost:${MYSQL_PORT}/${MYSQL_DB}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
   jpa:

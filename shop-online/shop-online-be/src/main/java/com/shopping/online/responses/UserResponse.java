@@ -56,7 +56,7 @@ public class UserResponse {
                 .email(userEntity.getEmail())
                 .phoneNumber(userEntity.getPhoneNumber())
                 .dob(userEntity.getDob())
-                .phoneNumber(userEntity.getPassword())
+                .password(userEntity.getPassword())
                 .avatar(userEntity.getAvatar())
                 .address(userEntity.getAddress())
                 .gender(userEntity.isGender())

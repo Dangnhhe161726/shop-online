@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailDTO {
-    @Size(min = 0, message = "Price is not less than 0")
+    @Min(value = 0, message = "Price is not less than 0")
     private Float price;
 
     @Min(value = 1, message = "Quantity must be great than 0")
     private int quantity;
 
     @JsonProperty("total_money")
-    @Size(min = 0, message = "Total money not have less than 0")
-    private Float total_money;
+    @Min(value = 0, message = "Total money not have less than 0")
+    private Float totalMoney;
 
     @JsonProperty("product_id")
     @Min(value = 1, message = "Product id must be great than 0")

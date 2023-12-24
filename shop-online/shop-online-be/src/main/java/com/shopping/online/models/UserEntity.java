@@ -52,4 +52,14 @@ public class UserEntity {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<Product> products;
+
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<Token> tokens;
+
+    @OneToMany(mappedBy = "userEntity",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<SocialAccount> socialAccounts;
 }

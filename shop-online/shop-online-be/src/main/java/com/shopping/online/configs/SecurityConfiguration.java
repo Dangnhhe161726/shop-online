@@ -56,10 +56,11 @@ public class SecurityConfiguration {
                                 String.format("%s/colors/**", apiPrefix)).permitAll()
 
                         .requestMatchers(HttpMethod.GET,
-                                String.format("%s/orders", apiPrefix)).permitAll()
+                                String.format("%s/orders/**", apiPrefix)).permitAll()
 
                         .requestMatchers(HttpMethod.GET,
-                                String.format("%s/order_details", apiPrefix)).permitAll()
+                                String.format("%s/order_details/**", apiPrefix)).permitAll()
+
                         .anyRequest()
                         .authenticated()
                 )

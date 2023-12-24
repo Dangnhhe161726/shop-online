@@ -22,7 +22,7 @@ public class OrderDetailController {
 
     @GetMapping("/{id}")
     public ResponseEntity<HttpResponse> getOrderDetail(
-            @Valid @PathVariable("id") Long orderDetailId
+            @Valid @PathVariable("id") Long id
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
@@ -32,9 +32,9 @@ public class OrderDetailController {
     }
 
     //Get list order detail of oder
-    @GetMapping("/order/{id}")
+    @GetMapping("/order/{order_id}")
     public ResponseEntity<HttpResponse> getOrderDetails(
-            @Valid @PathVariable("id") Long orderId
+            @Valid @PathVariable("order_id") Long orderId
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
