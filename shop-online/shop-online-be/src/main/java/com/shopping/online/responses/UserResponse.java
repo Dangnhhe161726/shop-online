@@ -2,7 +2,6 @@ package com.shopping.online.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shopping.online.models.UserEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

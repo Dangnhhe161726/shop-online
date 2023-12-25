@@ -1,9 +1,9 @@
 package com.shopping.online.controllers;
 
-import com.shopping.online.dtos.CategoryDTO;
-import com.shopping.online.models.Category;
+import com.shopping.online.dtos.SizeDTO;
+import com.shopping.online.models.SizeEntity;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.CategoryService;
+import com.shopping.online.services.SizeService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +18,28 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("${api.prefix}/sizes")
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/categories")
-public class CategoryController {
-
-    private final CategoryService categoryService;
+public class SizeController {
+    private final SizeService sizeService;
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
-    public ResponseEntity<HttpResponse> getAllCategory(
-    ) {
-        List<Category> categoryList = categoryService.getAllCategory();
+    public ResponseEntity<HttpResponse> getAllSize() {
+        List<SizeEntity> sizeEntities = sizeService.getAllSize();
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(timeStamp)
-                        .message("get all category success")
-                        .data(Map.of("categories", categoryList))
+                        .message("Get all size success")
+                        .data(Map.of("sizes", sizeEntities))
                         .build()
         );
     }
 
-
     @PostMapping("")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> insertCategory(
-            @Valid @RequestBody CategoryDTO categoryDTO,
+    public ResponseEntity<HttpResponse> createSize(
+            @Valid @RequestBody SizeDTO sizeDTO,
             BindingResult result
     ) {
         try {
@@ -55,12 +52,12 @@ public class CategoryController {
                                 .build()
                 );
             }
-            Category newCategory = categoryService.createCategory(categoryDTO);
+            SizeEntity newSizeEntity = sizeService.createSize(sizeDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .message("insert category success")
-                            .data(Map.of("new_category", newCategory))
+                            .message("Size created")
+                            .data(Map.of("new_size", newSizeEntity))
                             .build()
             );
         } catch (Exception e) {
@@ -75,9 +72,9 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> updateCategory(
-            @PathVariable("id") Long id,
-            @Valid @RequestBody CategoryDTO categoryDTO,
+    public ResponseEntity<HttpResponse> updateSize(
+            @Valid @PathVariable("id") Long id,
+            @Valid @RequestBody SizeDTO sizeDTO,
             BindingResult result
     ) {
         try {
@@ -90,12 +87,12 @@ public class CategoryController {
                                 .build()
                 );
             }
-            Category updateCategory = categoryService.updateCategory(id, categoryDTO);
+            SizeEntity updateSizeEntity = sizeService.updateSize(id, sizeDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .data(Map.of("update_category", updateCategory))
-                            .message("update category success")
+                            .message("Size updated")
+                            .data(Map.of("update_size", updateSizeEntity))
                             .build()
             );
         } catch (Exception e) {
@@ -110,18 +107,18 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> deleteCategory(
-            @PathVariable("id") Long id
+    public ResponseEntity<HttpResponse> deleteSize(
+            @Valid @PathVariable("id") Long id
     ) {
-        try{
-            categoryService.deleteCategory(id);
+        try {
+            sizeService.deleteSize(id);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .message("delete category by id " + id + " success")
+                            .message("Size deleted")
                             .build()
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
@@ -130,5 +127,4 @@ public class CategoryController {
             );
         }
     }
-
 }

@@ -19,11 +19,6 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
-
-    @OneToMany(mappedBy = "brand",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private List<Product> products;
 }

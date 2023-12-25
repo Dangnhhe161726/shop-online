@@ -1,7 +1,9 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.BrandDTO;
+import com.shopping.online.models.Brand;
 import com.shopping.online.responses.HttpResponse;
+import com.shopping.online.services.BrandService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,20 +14,25 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/brands")
 @RequiredArgsConstructor
 public class BrandController {
+    private final BrandService brandService;
+    private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
     public ResponseEntity<HttpResponse> getAllBrand(
     ) {
+        List<Brand> brands = brandService.getAllBrand();
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .message("get all brand")
+                        .timeStamp(timeStamp)
+                        .message("Get all brand success")
+                        .data(Map.of("brands", brands))
                         .build()
         );
     }
@@ -41,24 +48,24 @@ public class BrandController {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(
                         HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
+                                .timeStamp(timeStamp)
                                 .message(ValidationDTO.getMessageError(result))
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build()
                 );
             }
-
+            Brand newBrand = brandService.createBrand(brandDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("newBrand", brandDTO))
-                            .message("insert brand success")
+                            .timeStamp(timeStamp)
+                            .message("Created brand success")
+                            .data(Map.of("new_brand", newBrand))
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
@@ -76,24 +83,24 @@ public class BrandController {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(
                         HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
+                                .timeStamp(timeStamp)
                                 .message(ValidationDTO.getMessageError(result))
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build()
                 );
             }
-
+            Brand updateBrand = brandService.updateBrand(id, brandDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("id", id, "updateBrand", brandDTO))
+                            .timeStamp(timeStamp)
                             .message("update brand success")
+                            .data(Map.of("update_brand", updateBrand))
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
@@ -105,13 +112,21 @@ public class BrandController {
     public ResponseEntity<HttpResponse> deleteBrand(
             @PathVariable("id") Long id
     ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("id", id))
-                        .message("delete brand by id success")
-                        .build()
-        );
+        try {
+            brandService.deleteBrand(id);
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .message("delete brand by id " + id + " success")
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
     }
-
 }

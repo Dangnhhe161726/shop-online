@@ -12,6 +12,7 @@ import com.shopping.online.repositories.UserRepository;
 import com.shopping.online.sercurities.jwt.JwtGenerator;
 import com.shopping.online.services.AuthService;
 import com.shopping.online.services.EmailService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserEntity register(RegisterDTO registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -65,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         for (Role role: registerDto.getRoles()) {
             checkRole = roleRepository.findByName(role.getName()).get();
             if(checkRole == null){
-                throw new NoSuchElementException("Not find this role");
+                throw new NoSuchElementException("Not found this role");
             }
             roles.add(checkRole);
         }
@@ -89,12 +91,13 @@ public class AuthServiceImpl implements AuthService {
         confirmationRepository.save(confirmation);
 
         //Send email with token
-        emailService.sendHtmlEmailWithEmbeddedFiles(userEntity.getFirstName() + userEntity.getLastName(),
+        emailService.sendHtmlEmailWithEmbeddedFiles(userEntity.getFirstName()+ " " + userEntity.getLastName(),
                 userEntity.getEmail(), token);
         return userEntity;
     }
 
     @Override
+    @Transactional
     public Boolean verifyToken(String token) {
         Confirmation confirmation = confirmationRepository.findByToken(token);
         Optional<UserEntity> userEntity = userRepository.findByEmail(confirmation.getUserEntity().getEmail());
