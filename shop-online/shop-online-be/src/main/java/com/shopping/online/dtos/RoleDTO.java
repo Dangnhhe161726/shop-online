@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ColorDTO {
-    @NotBlank(message = "Name color is not blank")
+public class RoleDTO {
+    @NotBlank(message = "Role name is not blank")
     private String name;
-
-    @NotBlank(message = "Code color is not blank")
-    private String code;
 }

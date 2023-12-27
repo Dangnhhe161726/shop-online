@@ -1,4 +1,4 @@
-package com.shopping.online.services;
+package com.shopping.online.services.brand;
 
 import com.shopping.online.dtos.BrandDTO;
 import com.shopping.online.models.Brand;

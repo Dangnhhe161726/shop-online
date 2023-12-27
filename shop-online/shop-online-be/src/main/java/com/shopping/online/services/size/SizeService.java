@@ -1,4 +1,4 @@
-package com.shopping.online.services;
+package com.shopping.online.services.size;
 
 import com.shopping.online.dtos.SizeDTO;
 import com.shopping.online.models.SizeEntity;

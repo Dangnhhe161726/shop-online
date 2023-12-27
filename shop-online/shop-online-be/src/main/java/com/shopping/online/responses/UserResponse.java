@@ -1,19 +1,19 @@
 package com.shopping.online.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.shopping.online.models.Role;
 import com.shopping.online.models.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
+
     @JsonProperty("id")
     private long id;
 
@@ -47,19 +47,7 @@ public class UserResponse {
     @JsonProperty("status")
     private boolean status;
 
-    public static UserResponse formUser(UserEntity userEntity){
-        return UserResponse.builder()
-                .id(userEntity.getId())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
-                .email(userEntity.getEmail())
-                .phoneNumber(userEntity.getPhoneNumber())
-                .dob(userEntity.getDob())
-                .password(userEntity.getPassword())
-                .avatar(userEntity.getAvatar())
-                .address(userEntity.getAddress())
-                .gender(userEntity.isGender())
-                .status(userEntity.isStatus())
-                .build();
-    }
+    @JsonProperty("roles")
+    List<Role> roles;
+
 }

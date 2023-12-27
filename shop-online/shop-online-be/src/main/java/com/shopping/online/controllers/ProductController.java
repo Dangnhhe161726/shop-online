@@ -1,9 +1,12 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.ProductDTO;
+import com.shopping.online.dtos.ProductImageDTO;
+import com.shopping.online.exceptions.InvalidParamException;
+import com.shopping.online.models.Product;
 import com.shopping.online.models.ProductImage;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.ProductService;
+import com.shopping.online.services.product.ProductService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,8 @@ import java.util.Map;
 public class ProductController {
     private final ProductService productService;
 
+    private String timeStamp = LocalDateTime.now().toString();
+
     @GetMapping("")
     public ResponseEntity<HttpResponse> getAllProduct(
             @RequestParam("page") int page,
@@ -33,7 +38,7 @@ public class ProductController {
     ) {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
+                        .timeStamp(timeStamp)
                         .message("get all product")
                         .data(Map.of("page", page, "limit", limit))
                         .build()
@@ -44,18 +49,28 @@ public class ProductController {
     public ResponseEntity<HttpResponse> getProductById(
             @PathVariable("id") Long id
     ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .message("get Product by id")
-                        .data(Map.of("id", id))
-                        .build()
-        );
+        try {
+            Product product = productService.getProductById(id);
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message("Get product by id " + id)
+                            .data(Map.of("product", product))
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
     }
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> insertProduct(
+    public ResponseEntity<HttpResponse> createProduct(
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ) {
@@ -63,17 +78,18 @@ public class ProductController {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(
                         HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
+                                .timeStamp(timeStamp)
                                 .message(ValidationDTO.getMessageError(result))
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build()
                 );
             }
+            Product newProduct = productService.createProduct(productDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("newProduct", productDTO))
-                            .message("insert product success")
+                            .timeStamp(timeStamp)
+                            .message("Insert product success")
+                            .data(Map.of("new_product", newProduct))
                             .build()
             );
         } catch (Exception e) {
@@ -94,13 +110,11 @@ public class ProductController {
             @ModelAttribute("files") List<MultipartFile> files
     ) {
         try {
+            List<ProductImage> productImages = new ArrayList<>();
             files = files == null ? new ArrayList<MultipartFile>() : files;
             if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
-                                .message("image upload maximum is 6")
-                                .build()
+                throw new InvalidParamException(
+                        "image upload maximum is " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT
                 );
             }
 
@@ -111,41 +125,44 @@ public class ProductController {
                 //check size of file and format
                 if (file.getSize() > 10 * 1024 * 1024) {
                     //file greater than 10 MB
-                    return ResponseEntity.badRequest().body(
-                            HttpResponse.builder()
-                                    .timeStamp(LocalDateTime.now().toString())
-                                    .message("file have size less than 10MB")
-                                    .build()
+                    throw new InvalidParamException(
+                            "File have size less than 10MB"
                     );
                 }
 
                 String contentType = file.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
-                    return ResponseEntity.badRequest().body(
-                            HttpResponse.builder()
-                                    .timeStamp(LocalDateTime.now().toString())
-                                    .message("unsupported media type")
-                                    .build()
+                    throw new IllegalArgumentException(
+                            "Unsupported media type"
                     );
                 }
                 //save file and update
                 String filename = productService.storeFile(file);
+
+                //save in database
+                ProductImage newProductImage = productService.createProductImage(
+                        ProductImageDTO.builder()
+                                .imageUrl(filename)
+                                .productId(producId)
+                                .build()
+                );
+                productImages.add(newProductImage);
             }
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .message("ok")
+                            .timeStamp(timeStamp)
+                            .message("Product have id " + producId + " has been created image")
+                            .data(Map.of("product_images", productImages))
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
         }
-
-
     }
 
     @PutMapping("/{id}")
@@ -155,27 +172,28 @@ public class ProductController {
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ) {
-        try{
+        try {
             if (result.hasErrors()) {
                 return ResponseEntity.badRequest().body(
                         HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
+                                .timeStamp(timeStamp)
                                 .message(ValidationDTO.getMessageError(result))
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build()
                 );
             }
+            Product updateProduct = productService.updateProduct(id, productDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .data(Map.of("updateProduct", productDTO, "id", id))
+                            .timeStamp(timeStamp)
                             .message("update product success")
+                            .data(Map.of("update_product", updateProduct))
                             .build()
             );
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
@@ -187,12 +205,21 @@ public class ProductController {
     public ResponseEntity<HttpResponse> deleteProduct(
             @PathVariable("id") Long id
     ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(Map.of("id", id))
-                        .message("delete product success")
-                        .build()
-        );
+        try {
+            productService.deleteProductById(id);
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .message("Delete product success")
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
     }
 }

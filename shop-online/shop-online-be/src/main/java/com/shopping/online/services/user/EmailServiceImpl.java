@@ -1,6 +1,5 @@
-package com.shopping.online.services.impl;
+package com.shopping.online.services.user;
 
-import com.shopping.online.services.EmailService;
 import com.shopping.online.utils.EmailUtils;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;

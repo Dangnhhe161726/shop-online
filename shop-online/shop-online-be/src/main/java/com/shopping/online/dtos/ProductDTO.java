@@ -5,6 +5,7 @@ import com.shopping.online.models.Color;
 import com.shopping.online.models.SizeEntity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,17 +28,17 @@ public class ProductDTO {
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     private Float price;
 
+    @Min(value = 0, message = "Quantity must be greater than or equal to 0 ")
+    private int quantity;
+
+    @NotNull(message = "Status is not blank")
+    private Boolean status;
+
     @JsonProperty("short_description")
     private String shortDescription;
 
     @JsonProperty("long_description")
     private String longDescription;
-
-    @JsonProperty("update_time")
-    private Timestamp updateTime;
-
-    @JsonProperty("create_time")
-    private Timestamp createTime;
 
     @JsonProperty("brand_id")
     @Min(value = 1, message = "Brand's ID must be > 0")
@@ -47,10 +48,14 @@ public class ProductDTO {
     @Min(value = 1, message = "Category's ID must be > 0")
     private Long categoryId;
 
+    @JsonProperty("user_id")
+    @Min(value = 1, message = "User's ID must be > 0")
+    private Long userId;
+
     @JsonProperty("sizes")
-    private List<SizeEntity> sizeEntities;
+    private List<Long> sizes;
 
     @JsonProperty("colors")
-    private List<Color> colors;
+    private List<Long> colors;
 
 }

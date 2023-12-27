@@ -1,4 +1,4 @@
-package com.shopping.online.services;
+package com.shopping.online.services.user;
 
 
 import com.shopping.online.dtos.LoginDTO;

@@ -1,10 +1,10 @@
-package com.shopping.online.services.impl;
+package com.shopping.online.services.size;
 
 import com.shopping.online.dtos.SizeDTO;
+import com.shopping.online.models.Product;
 import com.shopping.online.models.SizeEntity;
 import com.shopping.online.repositories.ProductRepository;
 import com.shopping.online.repositories.SizeRepository;
-import com.shopping.online.services.SizeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,11 +54,15 @@ public class SizeServiceImpl implements SizeService {
     }
 
     @Override
+    @Transactional
     public void deleteSize(Long id) throws Exception {
-        if (sizeRepository.existsById(id)) {
-            sizeRepository.deleteById(id);
-        } else {
+        if (!sizeRepository.existsById(id)) {
             throw new IllegalStateException("Size have id " + id + " not found");
         }
+        List<Product> products = productRepository.findProductsBySizeId(id);
+        if (!products.isEmpty()) {
+            throw new RuntimeException("Can not delete size is still associated with Product");
+        }
+        sizeRepository.deleteById(id);
     }
 }

@@ -1,9 +1,9 @@
 package com.shopping.online.controllers;
 
-import com.shopping.online.dtos.BrandDTO;
-import com.shopping.online.models.Brand;
+import com.shopping.online.dtos.ColorDTO;
+import com.shopping.online.models.Color;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.brand.BrandService;
+import com.shopping.online.services.color.ColorService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,30 +18,28 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("${api.prefix}/brands")
+@RequestMapping("${api.prefix}/colors")
 @RequiredArgsConstructor
-public class BrandController {
-    private final BrandService brandService;
+public class ColorController {
+    private final ColorService colorService;
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
-    public ResponseEntity<HttpResponse> getAllBrand(
-    ) {
-        List<Brand> brands = brandService.getAllBrand();
+    public ResponseEntity<HttpResponse> getAllColor() {
+        List<Color> colors = colorService.getAllColor();
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(timeStamp)
-                        .message("Get all brand success")
-                        .data(Map.of("brands", brands))
+                        .message("Get all color success")
+                        .data(Map.of("colors", colors))
                         .build()
         );
     }
 
-
     @PostMapping("")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> insertBrand(
-            @Valid @RequestBody BrandDTO brandDTO,
+    public ResponseEntity<HttpResponse> createColor(
+            @Valid @RequestBody ColorDTO colorDTO,
             BindingResult result
     ) {
         try {
@@ -54,12 +52,12 @@ public class BrandController {
                                 .build()
                 );
             }
-            Brand newBrand = brandService.createBrand(brandDTO);
+            Color newColor = colorService.createColor(colorDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .message("Created brand success")
-                            .data(Map.of("new_brand", newBrand))
+                            .message("Color created")
+                            .data(Map.of("new_color", newColor))
                             .build()
             );
         } catch (Exception e) {
@@ -74,9 +72,9 @@ public class BrandController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> updateBrand(
-            @PathVariable("id") Long id,
-            @RequestBody BrandDTO brandDTO,
+    public ResponseEntity<HttpResponse> updateColor(
+            @Valid @PathVariable("id") Long id,
+            @Valid @RequestBody ColorDTO colorDTO,
             BindingResult result
     ) {
         try {
@@ -89,12 +87,12 @@ public class BrandController {
                                 .build()
                 );
             }
-            Brand updateBrand = brandService.updateBrand(id, brandDTO);
+            Color updateColor = colorService.updateColor(id, colorDTO);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .message("update brand success")
-                            .data(Map.of("update_brand", updateBrand))
+                            .message("Color updated")
+                            .data(Map.of("update_color", updateColor))
                             .build()
             );
         } catch (Exception e) {
@@ -109,15 +107,15 @@ public class BrandController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('SALE')")
-    public ResponseEntity<HttpResponse> deleteBrand(
-            @PathVariable("id") Long id
+    public ResponseEntity<HttpResponse> deleteColor(
+            @Valid @PathVariable("id") Long id
     ) {
         try {
-            brandService.deleteBrand(id);
+            colorService.deleteColor(id);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
-                            .message("delete brand by id " + id + " success")
+                            .timeStamp(timeStamp)
+                            .message("Color deleted")
                             .build()
             );
         } catch (Exception e) {

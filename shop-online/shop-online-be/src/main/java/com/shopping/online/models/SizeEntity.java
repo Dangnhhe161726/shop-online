@@ -22,14 +22,4 @@ public class SizeEntity {
 
     @Column(unique = true)
     private String name;
-
-    @ManyToMany(mappedBy = "sizeEnties")
-    private List<Product> products = new ArrayList<>();
-
-    @PreRemove
-    private void preRemove(){
-        if(!products.isEmpty()){
-            throw new RuntimeException("Can not delete size is still associated with Product");
-        }
-    }
 }

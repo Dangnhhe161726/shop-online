@@ -1,4 +1,4 @@
-package com.shopping.online.services;
+package com.shopping.online.services.user;
 
 public interface EmailService {
     void sendSimpleMailMessage(String name, String to, String token);

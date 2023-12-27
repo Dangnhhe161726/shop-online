@@ -19,4 +19,7 @@ public class Color {
 
     @Column(unique = true)
     private String name;
+
+    @Column(length = 50)
+    private String code;
 }

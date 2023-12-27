@@ -1,5 +1,7 @@
 package com.shopping.online.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,26 +31,37 @@ public class Product {
     @Column(nullable = false)
     private Float price;
 
+    @Column(length = 225)
+    private String thumnail;
+
     @Column(name = "short_description", length = 255)
+    @JsonProperty("short_description")
     private String shortDescription;
 
     @Column(name = "long_description")
+    @JsonProperty("long_description")
     private String longDescription;
 
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp updateTime;
+    @JsonIgnore
+    private LocalDateTime updateTime;
 
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    @JsonIgnore
+    private LocalDateTime createTime;
 
+    @Column(nullable = false)
     private int quantity;
+
+    @Column(nullable = false)
     private boolean status;
 
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private UserEntity userEntity;
 
     @ManyToOne
@@ -68,15 +82,13 @@ public class Product {
     @JoinTable(name = "product_size",
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "size_id", referencedColumnName = "id"))
+    @JsonProperty("sizes")
     private List<SizeEntity> sizeEnties = new ArrayList<>();
 
     @OneToMany(mappedBy = "product",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
+    @JsonProperty("product_images")
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private List<OrderDetail> orderDetails;
 }

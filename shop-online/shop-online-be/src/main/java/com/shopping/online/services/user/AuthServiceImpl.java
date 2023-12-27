@@ -1,4 +1,4 @@
-package com.shopping.online.services.impl;
+package com.shopping.online.services.user;
 
 
 import com.shopping.online.dtos.LoginDTO;
@@ -10,8 +10,6 @@ import com.shopping.online.repositories.ConfirmationRepository;
 import com.shopping.online.repositories.RoleRepository;
 import com.shopping.online.repositories.UserRepository;
 import com.shopping.online.sercurities.jwt.JwtGenerator;
-import com.shopping.online.services.AuthService;
-import com.shopping.online.services.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -63,13 +61,14 @@ public class AuthServiceImpl implements AuthService {
         }
 
         List<Role> roles = new ArrayList<>();
-        Role checkRole = null;
-        for (Role role: registerDto.getRoles()) {
-            checkRole = roleRepository.findByName(role.getName()).get();
-            if(checkRole == null){
+        Optional<Role> checkRole = null;
+        for (Long roleId: registerDto.getRoles()) {
+            checkRole = roleRepository.findById(roleId);
+            if(checkRole.isPresent()){
+                roles.add(checkRole.get());
+            }else {
                 throw new NoSuchElementException("Not found this role");
             }
-            roles.add(checkRole);
         }
 
         UserEntity userEntity = new UserEntity();

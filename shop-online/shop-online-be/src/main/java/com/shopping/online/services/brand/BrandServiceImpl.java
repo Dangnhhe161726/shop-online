@@ -1,11 +1,10 @@
-package com.shopping.online.services.impl;
+package com.shopping.online.services.brand;
 
 import com.shopping.online.dtos.BrandDTO;
 import com.shopping.online.models.Brand;
 import com.shopping.online.models.Product;
 import com.shopping.online.repositories.BrandRepository;
 import com.shopping.online.repositories.ProductRepository;
-import com.shopping.online.services.BrandService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

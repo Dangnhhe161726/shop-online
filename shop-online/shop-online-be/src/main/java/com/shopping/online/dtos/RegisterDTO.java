@@ -51,5 +51,5 @@ public class RegisterDTO {
     private Date dob;
 
     @NotEmpty(message = "Role is not empty")
-    private List<Role> roles;
+    private List<Long> roles;
 }

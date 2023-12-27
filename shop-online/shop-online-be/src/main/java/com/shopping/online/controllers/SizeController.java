@@ -3,7 +3,7 @@ package com.shopping.online.controllers;
 import com.shopping.online.dtos.SizeDTO;
 import com.shopping.online.models.SizeEntity;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.SizeService;
+import com.shopping.online.services.size.SizeService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

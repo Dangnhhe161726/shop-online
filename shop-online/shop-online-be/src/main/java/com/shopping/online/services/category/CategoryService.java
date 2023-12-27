@@ -1,4 +1,4 @@
-package com.shopping.online.services;
+package com.shopping.online.services.category;
 
 import com.shopping.online.dtos.CategoryDTO;
 import com.shopping.online.models.Category;

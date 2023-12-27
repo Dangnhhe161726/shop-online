@@ -3,7 +3,7 @@ package com.shopping.online.controllers;
 import com.shopping.online.dtos.CategoryDTO;
 import com.shopping.online.models.Category;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.CategoryService;
+import com.shopping.online.services.category.CategoryService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
