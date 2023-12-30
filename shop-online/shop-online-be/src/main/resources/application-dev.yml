@@ -18,3 +18,6 @@ VERIFY_EMAIL_HOST: http://localhost:${SERVER_PORT}
 
 #Version Api
 VERSION_API: v1
+
+#Capacity upload file
+FILE_CAPACITY: 50MB

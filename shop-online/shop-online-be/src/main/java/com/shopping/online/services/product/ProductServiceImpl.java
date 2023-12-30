@@ -6,6 +6,7 @@ import com.shopping.online.exceptions.DataNotFoundException;
 import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.*;
 import com.shopping.online.repositories.*;
+import com.shopping.online.responses.ProductResponse;
 import com.shopping.online.services.product.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -134,8 +135,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllProduct(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+    public Page<ProductResponse> getAllProduct(PageRequest pageRequest) {
+        return productRepository.findAll(pageRequest).map(
+                product -> modelMapper.map(product, ProductResponse.class)
+        );
     }
 
     @Override
@@ -238,5 +241,10 @@ public class ProductServiceImpl implements ProductService {
         }
         productRepository.save(existingProduct);
         return productImageRepository.save(newProductImage);
+    }
+
+    @Override
+    public Boolean existByName(String name) {
+        return productRepository.existsByName(name);
     }
 }

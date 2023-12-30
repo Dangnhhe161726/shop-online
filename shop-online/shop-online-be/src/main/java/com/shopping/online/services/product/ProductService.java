@@ -5,6 +5,7 @@ import com.shopping.online.dtos.ProductImageDTO;
 import com.shopping.online.exceptions.DataNotFoundException;
 import com.shopping.online.models.Product;
 import com.shopping.online.models.ProductImage;
+import com.shopping.online.responses.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +19,7 @@ public interface ProductService {
 
     Product getProductById(Long id) throws Exception;
 
-    Page<Product> getAllProduct(PageRequest pageRequest);
+    Page<ProductResponse> getAllProduct(PageRequest pageRequest);
 
     Product updateProduct(Long id, ProductDTO productDTO) throws Exception;
 
@@ -26,4 +27,6 @@ public interface ProductService {
 
     ProductImage createProductImage(
             ProductImageDTO productImageDTO) throws Exception;
+
+    Boolean existByName(String name);
 }

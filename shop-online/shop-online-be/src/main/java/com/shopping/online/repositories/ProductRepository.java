@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    Boolean existsByName(String name);
+
     List<Product> findByCategory(Category category);
 
     List<Product> findByBrand(Brand brand);

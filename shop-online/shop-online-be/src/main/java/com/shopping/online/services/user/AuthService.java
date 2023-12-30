@@ -9,5 +9,5 @@ public interface AuthService {
 
     String login (LoginDTO loginDto);
     UserEntity register(RegisterDTO registerDto);
-    Boolean verifyToken(String token);
+    Boolean verifyToken(String token) throws Exception;
 }

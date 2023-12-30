@@ -43,14 +43,11 @@ public class ProductResponse {
     @JsonProperty("quantity")
     private int quantity;
 
-    @JsonProperty("status")
-    private boolean status;
+    @JsonProperty("category_id")
+    private Long categoryId;
 
-    @JsonProperty("category")
-    private Category category;
-
-    @JsonProperty("brand")
-    private Brand brand;
+    @JsonProperty("brand_id")
+    private Long brandId;
 
     @JsonProperty("colors")
     private List<Color> colors;

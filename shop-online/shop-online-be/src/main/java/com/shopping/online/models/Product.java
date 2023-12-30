@@ -38,7 +38,7 @@ public class Product {
     @JsonProperty("short_description")
     private String shortDescription;
 
-    @Column(name = "long_description")
+    @Column(name = "long_description", length = 1000)
     @JsonProperty("long_description")
     private String longDescription;
 

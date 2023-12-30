@@ -32,9 +32,6 @@ public class UserResponse {
     @JsonProperty("date_of_birth")
     private Date dob;
 
-    @JsonProperty("password")
-    private String password;
-
     @JsonProperty("avatar")
     private String avatar;
 
@@ -46,8 +43,5 @@ public class UserResponse {
 
     @JsonProperty("status")
     private boolean status;
-
-    @JsonProperty("roles")
-    List<Role> roles;
 
 }

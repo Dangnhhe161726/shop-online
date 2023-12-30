@@ -38,7 +38,10 @@ spring:
             required: true
     verify:
       host: ${VERIFY_EMAIL_HOST}
-
+  servlet:
+    multipart:
+      max-file-size: ${FILE_CAPACITY}
+      max-request-size: ${FILE_CAPACITY}
 server:
   port: ${SERVER_PORT:8080}
 

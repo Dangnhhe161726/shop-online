@@ -1,5 +1,6 @@
 package com.shopping.online.controllers.auth;
 
+import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.responses.HttpResponse;
 import com.shopping.online.dtos.LoginDTO;
 import com.shopping.online.dtos.RegisterDTO;
@@ -72,13 +73,7 @@ public class AuthController {
             }
 
             if (!registerDto.getPassword().equalsIgnoreCase(registerDto.getRepassword())) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message("New password not equal with repassword")
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
-                );
+                throw new InvalidParamException("New password not equal with repassword");
             }
 
             UserEntity newUserEntity = authService.register(registerDto);

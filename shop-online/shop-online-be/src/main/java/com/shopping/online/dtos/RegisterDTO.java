@@ -41,8 +41,6 @@ public class RegisterDTO {
     @NotBlank(message = "Repassword is not blank")
     private String repassword;
 
-    private String avatar;
-
     @NotBlank(message = "Address is not blank")
     private String address;
 

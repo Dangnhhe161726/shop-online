@@ -1,15 +1,21 @@
 package com.shopping.online.controllers;
 
+import com.github.javafaker.Faker;
 import com.shopping.online.dtos.ProductDTO;
 import com.shopping.online.dtos.ProductImageDTO;
 import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.Product;
 import com.shopping.online.models.ProductImage;
 import com.shopping.online.responses.HttpResponse;
+import com.shopping.online.responses.ProductResponse;
 import com.shopping.online.services.product.ProductService;
+import com.shopping.online.services.product.image.ProductImageService;
 import com.shopping.online.validations.ValidationDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,19 +34,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final ProductImageService productImageService;
 
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
     public ResponseEntity<HttpResponse> getAllProduct(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
     ) {
+        PageRequest pageRequest = PageRequest.of(
+                page, limit,
+                Sort.by("id").descending()
+        );
+        Page<ProductResponse> products = productService.getAllProduct(pageRequest);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(timeStamp)
-                        .message("get all product")
-                        .data(Map.of("page", page, "limit", limit))
+                        .message("Get all product success")
+                        .data(Map.of("index_page", products.getPageable().getPageNumber(),
+                                "products", products)
+                        )
                         .build()
         );
     }
@@ -110,44 +124,7 @@ public class ProductController {
             @ModelAttribute("files") List<MultipartFile> files
     ) {
         try {
-            List<ProductImage> productImages = new ArrayList<>();
-            files = files == null ? new ArrayList<MultipartFile>() : files;
-            if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-                throw new InvalidParamException(
-                        "image upload maximum is " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT
-                );
-            }
-
-            for (MultipartFile file : files) {
-                if (file.getSize() == 0) {
-                    continue;
-                }
-                //check size of file and format
-                if (file.getSize() > 10 * 1024 * 1024) {
-                    //file greater than 10 MB
-                    throw new InvalidParamException(
-                            "File have size less than 10MB"
-                    );
-                }
-
-                String contentType = file.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                    throw new IllegalArgumentException(
-                            "Unsupported media type"
-                    );
-                }
-                //save file and update
-                String filename = productService.storeFile(file);
-
-                //save in database
-                ProductImage newProductImage = productService.createProductImage(
-                        ProductImageDTO.builder()
-                                .imageUrl(filename)
-                                .productId(producId)
-                                .build()
-                );
-                productImages.add(newProductImage);
-            }
+            List<ProductImage> productImages = productImageService.createImages(producId, files);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
@@ -209,8 +186,51 @@ public class ProductController {
             productService.deleteProductById(id);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message("Delete product success")
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message(e.getMessage())
+                            .build()
+            );
+        }
+    }
+
+    @PostMapping("/generate-fake-products")
+    @PreAuthorize("hasAuthority('SALE')")
+    public ResponseEntity<HttpResponse> createFakeProducts() {
+        try {
+            Faker faker = new Faker();
+            for (int i = 0; i <= 500; i++) {
+                String productName = faker.commerce().productName();
+                if (productService.existByName(productName)) {
+                    continue;
+                }
+                List<Long> fakeList = new ArrayList<>();
+                fakeList.add((long) faker.number().numberBetween(2, 10));
+                ProductDTO productDTO = ProductDTO.builder()
+                        .name(productName)
+                        .price((float) faker.number().numberBetween(0, 2000000))
+                        .quantity(faker.number().numberBetween(0, 100))
+                        .status(true)
+                        .shortDescription(faker.lorem().sentence(10))
+                        .longDescription(faker.lorem().sentence(50))
+                        .brandId((long) faker.number().numberBetween(2, 5))
+                        .categoryId((long) faker.number().numberBetween(2, 5))
+                        .sizes(fakeList)
+                        .colors(fakeList)
+                        .userId(1L)
+                        .build();
+                productService.createProduct(productDTO);
+            }
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(timeStamp)
+                            .message("Fake products success")
                             .build()
             );
         } catch (Exception e) {
