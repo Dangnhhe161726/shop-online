@@ -1,13 +1,13 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.BrandDTO;
+import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.Brand;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.brand.BrandService;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.services.brand.IBrandService;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("${api.prefix}/brands")
 @RequiredArgsConstructor
 public class BrandController {
-    private final BrandService brandService;
+    private final IBrandService brandService;
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
@@ -46,12 +46,8 @@ public class BrandController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Brand newBrand = brandService.createBrand(brandDTO);
@@ -81,12 +77,8 @@ public class BrandController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Brand updateBrand = brandService.updateBrand(id, brandDTO);

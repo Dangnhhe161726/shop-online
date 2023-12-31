@@ -1,13 +1,13 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.CategoryDTO;
+import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.Category;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.category.CategoryService;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.services.category.ICategoryService;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final ICategoryService categoryService;
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
@@ -47,12 +47,8 @@ public class CategoryController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Category newCategory = categoryService.createCategory(categoryDTO);
@@ -82,12 +78,8 @@ public class CategoryController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Category updateCategory = categoryService.updateCategory(id, categoryDTO);

@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  mysql8-container:
+    container_name: mysql8-container
+    image: mysql:8.2.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Abc123456789@
+      MYSQL_DATABASE: ShopOnline
+    ports:
+      - 3308:3306
+    volumes:
+      - ./sql/shoponline.sql:/docker-entrypoint-initdb.d/init-script.sql
+    networks:
+      - shoponline-network
+
+  phpmyadmin8-container:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin8-container
+    restart: always
+    depends_on:
+      - mysql8-container
+    ports:
+      - "8100:80"
+    environment:
+      PMA_HOST: mysql8-container
+    networks:
+      - shoponline-network
+
+networks:
+  shoponline-network:
+    driver: bridge

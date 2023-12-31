@@ -2,21 +2,20 @@ package com.shopping.online.controllers;
 
 import com.github.javafaker.Faker;
 import com.shopping.online.dtos.ProductDTO;
-import com.shopping.online.dtos.ProductImageDTO;
 import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.Product;
 import com.shopping.online.models.ProductImage;
 import com.shopping.online.responses.HttpResponse;
 import com.shopping.online.responses.ProductResponse;
-import com.shopping.online.services.product.ProductService;
-import com.shopping.online.services.product.image.ProductImageService;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.responses.ProductsResponse;
+import com.shopping.online.services.product.IProductService;
+import com.shopping.online.services.product.image.IProductImageService;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,8 +32,8 @@ import java.util.Map;
 @RequestMapping("${api.prefix}/products")
 @RequiredArgsConstructor
 public class ProductController {
-    private final ProductService productService;
-    private final ProductImageService productImageService;
+    private final IProductService productService;
+    private final IProductImageService productImageService;
 
     private String timeStamp = LocalDateTime.now().toString();
 
@@ -47,13 +46,15 @@ public class ProductController {
                 page, limit,
                 Sort.by("id").descending()
         );
-        Page<ProductResponse> products = productService.getAllProduct(pageRequest);
+        Page<ProductsResponse> products = productService.getAllProduct(pageRequest);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(timeStamp)
                         .message("Get all product success")
                         .data(Map.of("index_page", products.getPageable().getPageNumber(),
-                                "products", products)
+                                        "products", products,
+                                        "total_page", products.getTotalPages()
+                                )
                         )
                         .build()
         );
@@ -64,7 +65,7 @@ public class ProductController {
             @PathVariable("id") Long id
     ) {
         try {
-            Product product = productService.getProductById(id);
+            ProductResponse product = productService.getProductById(id);
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
@@ -90,12 +91,8 @@ public class ProductController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Product newProduct = productService.createProduct(productDTO);
@@ -151,12 +148,8 @@ public class ProductController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Product updateProduct = productService.updateProduct(id, productDTO);

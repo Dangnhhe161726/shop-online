@@ -1,6 +1,6 @@
 package com.shopping.online.controllers;
 
-import com.shopping.online.dtos.OrderDetailDTO;
+import com.shopping.online.dtos.RoleDTO;
 import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.responses.HttpResponse;
 import com.shopping.online.validations.ValidationDataRequest;
@@ -16,37 +16,26 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("${api.prefix}/order_details")
+@RequestMapping("${api.prefix}/roles")
 @RequiredArgsConstructor
-public class OrderDetailController {
-
-    @GetMapping("/{id}")
-    public ResponseEntity<HttpResponse> getOrderDetail(
-            @Valid @PathVariable("id") Long id
-    ) {
+public class RoleController {
+    private String timeStamp = LocalDateTime.now().toString();
+    @GetMapping("")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<HttpResponse> getAllRole() {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .message("get order detail by id")
-                        .build()
-        );
-    }
-
-    //Get list order detail of oder
-    @GetMapping("/order/{order_id}")
-    public ResponseEntity<HttpResponse> getOrderDetails(
-            @Valid @PathVariable("order_id") Long orderId
-    ) {
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .message("get list order detail of order by order id")
+                        .timeStamp(timeStamp)
+                        .message("Get all role success")
+                        .data(Map.of("roles", null))
                         .build()
         );
     }
 
     @PostMapping("")
-    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
-    public ResponseEntity<HttpResponse> createOrderDetail(
-            @Valid @RequestBody OrderDetailDTO orderDetailDTO,
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<HttpResponse> createRole(
+            @Valid @RequestBody RoleDTO roleDTO,
             BindingResult result
     ) {
         try {
@@ -55,17 +44,17 @@ public class OrderDetailController {
                         ValidationDataRequest.getMessageError(result)
                 );
             }
-
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .message("Create order detail success")
-                            .data(Map.of("new_order_detail", orderDetailDTO))
+                            .timeStamp(timeStamp)
+                            .message("Create role success")
+                            .data(Map.of("new_role", null))
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
@@ -73,44 +62,32 @@ public class OrderDetailController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
-    public ResponseEntity<HttpResponse> updateOrderDetail(
-            @Valid @PathVariable("id") Long orderDetailId,
-            @Valid @RequestBody OrderDetailDTO orderDetailDTO,
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<HttpResponse> updateCategory(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody RoleDTO roleDTO,
             BindingResult result
-    ){
+    ) {
         try {
             if (result.hasErrors()) {
                 throw new InvalidParamException(
                         ValidationDataRequest.getMessageError(result)
                 );
             }
-
             return ResponseEntity.ok().body(
                     HttpResponse.builder()
-                            .message("Update order detail success")
-                            .data(Map.of("update_order_detail", orderDetailDTO))
+                            .timeStamp(timeStamp)
+                            .data(Map.of("update_role", null))
+                            .message("Update role success")
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
-                            .timeStamp(LocalDateTime.now().toString())
+                            .timeStamp(timeStamp)
                             .message(e.getMessage())
                             .build()
             );
         }
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('SALE', 'USER')")
-    public ResponseEntity<HttpResponse> deleteOrderDetail(
-            @Valid @PathVariable("id") Long orderDetailId
-    ){
-        return ResponseEntity.ok().body(
-                HttpResponse.builder()
-                        .message("Delete order detail success")
-                        .build()
-        );
     }
 }

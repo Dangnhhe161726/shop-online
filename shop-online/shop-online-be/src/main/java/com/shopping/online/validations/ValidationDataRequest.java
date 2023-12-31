@@ -5,7 +5,7 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 
-public class ValidationDTO {
+public class ValidationDataRequest {
 
     public static String getMessageError(BindingResult result) {
         List<String> errorMessages = result.getFieldErrors()

@@ -6,8 +6,8 @@ import com.shopping.online.dtos.LoginDTO;
 import com.shopping.online.dtos.RegisterDTO;
 import com.shopping.online.models.UserEntity;
 import com.shopping.online.responses.UserResponse;
-import com.shopping.online.services.user.AuthService;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.services.user.IAuthService;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("${api.prefix}/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
+    private final IAuthService authService;
     private final ModelMapper modelMapper;
     private String timeStamp = LocalDateTime.now().toString();
 
@@ -38,7 +38,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(
                     HttpResponse.builder()
                             .timeStamp(timeStamp)
-                            .message(ValidationDTO.getMessageError(result))
+                            .message(ValidationDataRequest.getMessageError(result))
                             .status(HttpStatus.BAD_REQUEST)
                             .build()
             );
@@ -63,12 +63,8 @@ public class AuthController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
 
@@ -119,5 +115,6 @@ public class AuthController {
             );
         }
     }
+
 
 }

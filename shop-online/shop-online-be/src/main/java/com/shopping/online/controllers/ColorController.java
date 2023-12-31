@@ -1,13 +1,13 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.ColorDTO;
+import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.models.Color;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.services.color.ColorService;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.services.color.IColorService;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("${api.prefix}/colors")
 @RequiredArgsConstructor
 public class ColorController {
-    private final ColorService colorService;
+    private final IColorService colorService;
     private String timeStamp = LocalDateTime.now().toString();
 
     @GetMapping("")
@@ -44,12 +44,8 @@ public class ColorController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Color newColor = colorService.createColor(colorDTO);
@@ -79,12 +75,8 @@ public class ColorController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(timeStamp)
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
             Color updateColor = colorService.updateColor(id, colorDTO);

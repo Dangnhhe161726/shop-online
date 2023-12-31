@@ -1,9 +1,9 @@
 package com.shopping.online.controllers;
 
 import com.shopping.online.dtos.OrderDTO;
-import com.shopping.online.models.Order;
+import com.shopping.online.exceptions.InvalidParamException;
 import com.shopping.online.responses.HttpResponse;
-import com.shopping.online.validations.ValidationDTO;
+import com.shopping.online.validations.ValidationDataRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -63,12 +62,8 @@ public class OrderController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
 
@@ -97,12 +92,8 @@ public class OrderController {
     ) {
         try {
             if (result.hasErrors()) {
-                return ResponseEntity.badRequest().body(
-                        HttpResponse.builder()
-                                .timeStamp(LocalDateTime.now().toString())
-                                .message(ValidationDTO.getMessageError(result))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build()
+                throw new InvalidParamException(
+                        ValidationDataRequest.getMessageError(result)
                 );
             }
 
