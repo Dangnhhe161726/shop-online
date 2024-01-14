@@ -1,13 +1,11 @@
-#Database
-MYSQL_HOST: mysql
-MYSQL_PORT: 3306
-MYSQL_DB: shop_online
-MYSQL_USERNAME: root
-MYSQL_PASSWORD: 1234
-
 #Server
 SERVER_PORT: 8080
 ACTIVE_PROFILE: dev
+
+#Database
+MYSQL_URL: jdbc:mysql://localhost:3308/ShopOnline?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: Abc123456789@
 
 #Email Config
 EMAIL_HOST: smtp.gmail.com

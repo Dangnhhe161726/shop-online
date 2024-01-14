@@ -72,23 +72,23 @@ public class EmailService implements IEmailService {
             // Load resources using ResourceLoader
             Resource resourceFrist = resourceLoader.getResource("classpath:static/image_test_send_mail/image_1.jpg");
             Resource resourceSecond = resourceLoader.getResource("classpath:static/image_test_send_mail/image_2.jpg");
-            Resource resourceThird = resourceLoader.getResource("classpath:static/plan.pdf");
+//            Resource resourceThird = resourceLoader.getResource("classpath:static/plan.pdf");
 
             // Convert Resource to File
             File fileFirst = resourceFrist.getFile();
             File fileSecond = resourceSecond.getFile();
-            File fileThird = resourceThird.getFile();
+//            File fileThird = resourceThird.getFile();
 
             FileSystemResource fileSystemResourceFirst = new FileSystemResource(fileFirst);
             FileSystemResource fileSystemResourceSecond = new FileSystemResource(fileSecond);
-            FileSystemResource fileSystemResourceThird = new FileSystemResource(fileThird);
+//            FileSystemResource fileSystemResourceThird = new FileSystemResource(fileThird);
 
             helper.addAttachment(fileSystemResourceFirst.getFilename(),
                     fileSystemResourceFirst);
             helper.addAttachment(fileSystemResourceSecond.getFilename(),
                     fileSystemResourceSecond);
-            helper.addAttachment(fileSystemResourceThird.getFilename(),
-                    fileSystemResourceThird);
+//            helper.addAttachment(fileSystemResourceThird.getFilename(),
+//                    fileSystemResourceThird);
 
             emailSender.send(mimeMessage);
         } catch (Exception exception) {

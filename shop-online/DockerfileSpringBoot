@@ -1,0 +1,19 @@
+#Build
+FROM maven:3.8.4-openjdk-17-slim AS build
+WORKDIR /app
+COPY shop-online-be /app/shop-online-be
+RUN set -e && mvn package -f /app/shop-online-be/pom.xml
+
+#multi-staging
+FROM openjdk:17-slim  
+WORKDIR /app
+COPY --from=build /app/shop-online-be/target/online-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/shop-online-be/uploads uploads
+
+EXPOSE 8088
+CMD ["java","-jar","app.jar"]
+#docker build -t shop-online-spring:1.0.0 -f ./DockerfileSpringBoot .
+#docker login
+#create sunlight4d/shopapp-spring:1.0.3 repository on DockerHub
+#docker tag shopapp-spring:1.0.3 sunlight4d/shopapp-spring:1.0.3
+#docker push sunlight4d/shopapp-spring:1.0.3

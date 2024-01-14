@@ -93,7 +93,7 @@ public class AuthController {
 
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<HttpResponse> confirmUserAccount(@RequestParam("token") String token) {
         try {
             Boolean isSuccess = authService.verifyToken(token);
