@@ -1,8 +1,9 @@
 #Build
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
-COPY shop-online-be /app/shop-online-be
-RUN set -e && mvn package -f /app/shop-online-be/pom.xml
+COPY . /app/shop-online-be
+WORKDIR /app/shop-online-be
+RUN mvn clean package -DskipTests -X
 
 #multi-staging
 FROM openjdk:17-slim  

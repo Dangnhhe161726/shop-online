@@ -41,13 +41,12 @@ services:
   shop-online-spring:
     container_name: shop-online-spring
     build:
-      context: .
+      context: ./shop-online-be
       dockerfile: DockerfileSpringBoot
-    #docker tag <image_id> shopapp-spring:1.0.0
     image: shop-online-spring:1.0.0
     hostname: api_service
     ports:
-      - 8088:8088
+      - 8099:8088
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/ShopOnline?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       MYSQL_ROOT_PASSWORD: Abc123456789@
@@ -77,3 +76,9 @@ networks:
 
 #docker-compose -f ./deployment.yaml rm -s -f phpmyadmin-container
 #docker-compose -f ./deployment.yaml up -d phpmyadmin-container
+
+#docker-compose -f ./deployment.yaml rm -s -f shop-online-spring 
+#docker-compose -f ./deployment.yaml up -d shop-online-spring --build
+
+#docker-compose -f ./deployment.yaml rm -s -f redis-container
+#docker-compose -f ./deployment.yaml up -d redis-container

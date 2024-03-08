@@ -28,7 +28,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: nuyenhongdang@gmail.com
-    password: nehh amxp wtjp hles
+    password: pcba kosk gxht cued
     default-encoding: UTF-8
     properties:
       mail:
@@ -51,6 +51,6 @@ spring:
       max-request-size: ${FILE_CAPACITY:50MB}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8088}
 api:
   prefix: api/${VERSION_API:v1}
